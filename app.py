@@ -17,13 +17,21 @@ def home():
     '''
 
     bundle_id = bottle.request.params.get('bundle')
+    bundle_file = bottle.request.params.get('bundle-file')
 
-    if not bundle_id:
+    if not bundle_id and not bundle_file:
         return ('Hello, please post the contents of a bundle file as "bundle" '
                 'to get an SVG. The bundle file can only have ONE deployment '
                 'modeled')
 
-    bundle_url = api.parse_bundle_id(bundle_id)
+    if bundle_id and bundle_file:
+        bottle.abort(400, 'Calm down satan, too many bundles')
+
+    if bundle_id:
+        bundle_url = api.parse_bundle_id(bundle_id)
+    else:
+        bundle_url = bundle_file
+
     if not bundle_url:
         bottle.abort(400, 'The bundle ID you provided is not valid. Must be '
                      'either cs:bundle/bundle-name-# or '
