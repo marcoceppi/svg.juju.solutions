@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
+import api
 import yaml
 import bottle
-import tempfile
-import subprocess
 
-from settings import JUJSVG
+import requests
+
 
 app = application = bottle.Bottle()
 
@@ -16,39 +16,45 @@ def home():
     The front "index" page
     '''
 
-    bundle_url = bottle.request.params.get('bundle')
+    bundle_id = bottle.request.params.get('bundle')
 
-    if not bundle_url:
+    if not bundle_id:
         return ('Hello, please post the contents of a bundle file as "bundle" '
                 'to get an SVG. The bundle file can only have ONE deployment '
                 'modeled')
 
-    return "One day I'll support this. Today is not that day"
+    bundle_url = api.parse_bundle_id(bundle_id)
+    print(bundle_url)
+    if not bundle_url:
+        bottle.abort(400, 'The bundle ID you provided is not valid. Must be '
+                     'either cs:bundle/bundle-name-# or '
+                     'cs:~user/bundle/bundle-name-#')
+
+    bundle = yaml.safe_load(requests.get(bundle_url).text)
+    try:
+        svg = api.process_bundle(bundle)
+    except api.BundleFormatException as e:
+        bottle.abort(400, e.msg)
+    except api.JujuSVGException as e:
+        bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
+
+    bottle.response.content_type = 'image/svg+xml'
+    return svg
 
 
 @app.post('/')
 def process():
     bundle_file = bottle.request.body.read()
     bundle = yaml.safe_load(bundle_file)
-    if len(bundle) > 1 and 'services' not in bundle:
-        bottle.abort(400, 'This has multiple deployments')
 
-    if 'services' not in bundle:
-        if 'services' not in bundle.itervalues().next():
-            bottle.abort(400, "Can't tell what this bundle is, or if it is")
-
-        bundle = bundle.itervalues().next()
-
-    with tempfile.NamedTemporaryFile(delete=False) as f:
-        f.write(yaml.dump(bundle, default_flow_style=False))
-        f.flush()
-        try:
-            svg = subprocess.check_output([JUJSVG, f.name], stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            bottle.abort(406, "%s %s" % (e.cmd, e.output))
+    try:
+        svg = api.process_bundle(bundle)
+    except api.BundleFormatException as e:
+        bottle.abort(400, e.msg)
+    except api.JujuSVGException as e:
+        bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
 
     bottle.response.content_type = 'image/svg+xml'
-
     return svg
 
 if __name__ == '__main__':
