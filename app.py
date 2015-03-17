@@ -24,7 +24,6 @@ def home():
                 'modeled')
 
     bundle_url = api.parse_bundle_id(bundle_id)
-    print(bundle_url)
     if not bundle_url:
         bottle.abort(400, 'The bundle ID you provided is not valid. Must be '
                      'either cs:bundle/bundle-name-# or '

@@ -26,7 +26,6 @@ def parse_bundle_id(bundle_id):
 
 
 def process_bundle(bundle):
-    print(bundle)
     if len(bundle) > 1 and 'services' not in bundle:
         raise BundleFormatException('This has multiple deployments')
 
