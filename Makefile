@@ -24,9 +24,5 @@ lint: .venv
 .venv:
 	sudo apt-get install -qy python-virtualenv
 	virtualenv .venv
-	$(PYHOME)/pip install bottle flake8 coverage nose pyaml
+	$(PYHOME)/pip install bottle flake8 coverage nose pyaml networkx
 	#$(PYTHON) setup.py develop
-
-release: clean
-	tar --exclude-vcs -cvzf ../collector-web.tar.gz *
-
