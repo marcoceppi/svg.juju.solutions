@@ -7,6 +7,7 @@ import networkx as nx
 
 from settings import JUJSVG
 
+
 class JujuSVGException(Exception):
     def __init__(self, cmd, msg):
         self.cmd = cmd
@@ -62,6 +63,7 @@ def layout(bundle, algo, scale=1000.0):
         }
     return g
 
+
 def process_bundle(bundle):
     if len(bundle) > 1 and 'services' not in bundle:
         raise BundleFormatException('This has multiple deployments')
@@ -73,7 +75,7 @@ def process_bundle(bundle):
         bundle = bundle.itervalues().next()
 
     annotations = False
-    for service, srvc_data in a['services'].iteritems():
+    for service, srvc_data in bundle['services'].iteritems():
         if 'annotations' in srvc_data.keys():
             annotations = True
             break
