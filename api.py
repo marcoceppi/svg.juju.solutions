@@ -81,9 +81,9 @@ def process_bundle(bundle):
             break
 
     if not annotations:
-        layout = 'circular'
-        algo = getattr(nx, layout + '_layout', None)
-        layout(bundle, algo)
+        #layout = 'circular'
+        #algo = getattr(nx, layout + '_layout', None)
+        layout(bundle, nx.circular_layout)
 
     with tempfile.NamedTemporaryFile() as f:
         f.write(yaml.dump(bundle, default_flow_style=False))
