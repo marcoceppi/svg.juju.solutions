@@ -20,9 +20,7 @@ def home():
     bundle_file = bottle.request.params.get('bundle-file')
 
     if not bundle_id and not bundle_file:
-        return ('Hello, please post the contents of a bundle file as "bundle" '
-                'to get an SVG. The bundle file can only have ONE deployment '
-                'modeled')
+        return bottle.template('index')
 
     if bundle_id and bundle_file:
         bottle.abort(400, 'Calm down satan, too many bundles')
