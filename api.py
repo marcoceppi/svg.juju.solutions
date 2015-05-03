@@ -34,7 +34,7 @@ def split_rel(r):
 
 def mapply(func, g, **kwargs):
     args = {}
-    for name in func.func_code.co_varnames:
+    for name in func.__code__.co_varnames:
         if name in kwargs:
             args[name] = kwargs[name]
     return func(g, **args)
@@ -49,14 +49,14 @@ def layout(bundle, algo, scale=500.0):
     for relation in bundle['relations']:
         src = split_rel(relation[0])[0]
         tgts = relation[1]
-        if isinstance(tgts, (str, unicode)):
+        if isinstance(tgts, str):
             tgts = [tgts]
         for tgt in tgts:
             tgt = split_rel(tgt)[0]
             g.add_edge(src, tgt)
     pos = mapply(algo, g, k=45, iterations=100)
 
-    for service, data in bundle['services'].items():
+    for service, data in list(bundle['services'].items()):
         data['annotations'] = {
             "gui-x": float(pos[service][0]) * scale,
             "gui-y": float(pos[service][1]) * scale,
@@ -69,14 +69,14 @@ def process_bundle(bundle):
         raise BundleFormatException('This has multiple deployments')
 
     if 'services' not in bundle:
-        if 'services' not in bundle.itervalues().next():
+        if 'services' not in next(iter(bundle.values())):
             raise BundleFormatException("This probably isn't a bundle...")
 
-        bundle = bundle.itervalues().next()
+        bundle = next(iter(bundle.values()))
 
     annotations = False
-    for service, srvc_data in bundle['services'].iteritems():
-        if 'annotations' in srvc_data.keys():
+    for service, srvc_data in bundle['services'].items():
+        if 'annotations' in list(srvc_data.keys()):
             annotations = True
             break
 
@@ -86,7 +86,7 @@ def process_bundle(bundle):
         layout(bundle, nx.circular_layout)
 
     with tempfile.NamedTemporaryFile() as f:
-        f.write(yaml.dump(bundle, default_flow_style=False))
+        f.write(bytes(yaml.dump(bundle, default_flow_style=False), 'UTF-8'))
         f.flush()
         try:
             svg = subprocess.check_output([JUJSVG, f.name],
