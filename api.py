@@ -41,7 +41,7 @@ def mapply(func, g, **kwargs):
 
 
 # https://gist.github.com/bcsaller/adca309ba7abef2e8caf#file-place_bundle-py-L46
-def layout(bundle, algo, scale=1000.0):
+def layout(bundle, algo, scale=500.0):
     g = nx.MultiGraph()
     for service in bundle['services']:
         g.add_node(service)
