@@ -18,6 +18,8 @@ def home():
 
     bundle_id = bottle.request.params.get('bundle')
     bundle_file = bottle.request.params.get('bundle-file')
+    svg = None
+    svg_url = None
 
     if not bundle_id and not bundle_file:
         return bottle.template('index')
@@ -26,7 +28,7 @@ def home():
         bottle.abort(400, 'Calm down satan, too many bundles')
 
     if bundle_id:
-        bundle_url = api.parse_bundle_id(bundle_id)
+        bundle_url, svg_url = api.parse_bundle_id(bundle_id)
     else:
         bundle_url = bundle_file
 
@@ -35,13 +37,23 @@ def home():
                      'either cs:bundle/bundle-name-# or '
                      'cs:~user/bundle/bundle-name-#')
 
-    bundle = yaml.safe_load(requests.get(bundle_url).text)
-    try:
-        svg = api.process_bundle(bundle)
-    except api.BundleFormatException as e:
-        bottle.abort(400, e.msg)
-    except api.JujuSVGException as e:
-        bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
+    if svg_url:
+        r = requests.get(svg_url)
+        try:
+            r.raise_for_status()
+        except:
+            pass
+        else:
+            svg = r.text.replace('../../', 'https://api.jujucharms.com/v4/')
+
+    if not svg:
+        bundle = yaml.safe_load(requests.get(bundle_url).text)
+        try:
+            svg = api.process_bundle(bundle)
+        except api.BundleFormatException as e:
+            bottle.abort(400, e.msg)
+        except api.JujuSVGException as e:
+            bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
 
     bottle.response.content_type = 'image/svg+xml'
     return svg

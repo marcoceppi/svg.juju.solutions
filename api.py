@@ -25,7 +25,8 @@ def parse_bundle_id(bundle_id):
         return None
 
     bundle_path = m.group(0).replace('cs:', '')
-    return 'https://api.jujucharms.com/v4/%s/archive/bundle.yaml' % bundle_path
+    return ('https://api.jujucharms.com/v4/%s/archive/bundle.yaml' % bundle_path,
+            'https://api.jujucharms.com/v4/%s/diagram.svg' % bundle_path)
 
 
 def split_rel(r):
