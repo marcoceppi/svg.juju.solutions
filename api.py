@@ -87,7 +87,7 @@ def process_bundle(bundle):
         layout(bundle, nx.circular_layout)
 
     with tempfile.NamedTemporaryFile() as f:
-        f.write(bytes(yaml.dump(bundle, default_flow_style=False), 'UTF-8'))
+        f.write(yaml.dump(bundle, default_flow_style=False))
         f.flush()
         try:
             svg = subprocess.check_output([JUJSVG, f.name],
