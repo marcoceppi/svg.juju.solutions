@@ -66,7 +66,7 @@ def home():
     except api.JujuSVGException as e:
         bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
 
-    bottle.response.content_type = TYPES.get(format)
+    bottle.response.content_type = api.TYPES.get(format)
     return output
 
 
