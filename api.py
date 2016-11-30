@@ -5,7 +5,15 @@ import subprocess
 
 import networkx as nx
 
-from settings import JUJSVG
+import settings
+
+
+TYPES = {
+    'svg': 'image/svg+xml',
+    'png': 'image/png',
+    'pdf': 'application/pdf',
+    'xml': 'application/xml',
+}
 
 
 class JujuSVGException(Exception):
@@ -90,8 +98,24 @@ def process_bundle(bundle):
         f.write(yaml.dump(bundle, default_flow_style=False))
         f.flush()
         try:
-            svg = subprocess.check_output([JUJSVG, f.name],
-                                          stderr=subprocess.STDOUT)
+            cmd = [settings.JUJSVG, f.name]
+            svg = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             raise JujuSVGException(' '.join(e.cmd), e.output)
     return svg
+
+
+def output_bundle(svg, format='svg'):
+    if format == 'svg':
+        return svg
+
+    with tempfile.NamedTemporaryFile() as f:
+        f.write(svg)
+        f.flush()
+        try:
+            cmd = [settings.RSVG, '-f', format, f.name]
+            out = subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            raise JujuSVGException(' '.join(e.cmd), e.output)
+
+    return out

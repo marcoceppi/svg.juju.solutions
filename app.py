@@ -18,8 +18,14 @@ def home():
 
     bundle_id = bottle.request.params.get('bundle')
     bundle_file = bottle.request.params.get('bundle-file')
+    format = bottle.request.params.get('output', 'svg')
+
     svg = None
     svg_url = None
+
+    if format not in api.TYPES.keys():
+        msg = 'Format {0} not supported: {1}'
+        bottle.abort(400, msg.format(format, ','.join(api.TYPES.keys())))
 
     if not bundle_id and not bundle_file:
         return bottle.template('index')
@@ -44,7 +50,7 @@ def home():
         except:
             pass
         else:
-            svg = r.text.replace('../../', 'https://api.jujucharms.com/v4/')
+            svg = r.text.replace('../../', 'https://api.jujucharms.com/v5/')
 
     if not svg:
         bundle = yaml.safe_load(requests.get(bundle_url).text)
@@ -55,8 +61,13 @@ def home():
         except api.JujuSVGException as e:
             bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
 
-    bottle.response.content_type = 'image/svg+xml'
-    return svg
+    try:
+        output = api.output_bundle(svg, format)
+    except api.JujuSVGException as e:
+        bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
+
+    bottle.response.content_type = TYPES.get(format)
+    return output
 
 
 @app.post('/')

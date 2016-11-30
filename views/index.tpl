@@ -5,6 +5,17 @@
   <body>
     <h1 id="intro">A web frontend to Juju SVG</h1>
     <p>Hello. This is a web service to allow anyone with a <code>bundle.yaml</code> file to have it translated into an SVG as you would see in the Juju GUI or Charm Store</p>
+    <p>Enter a bundle.yaml URL and format type to get started:</p>
+    <form method=GET>
+      <input type=text size="40" placeholder="Bundle URL" id="bundle-file" name="bundle-file">
+      <select name="output">
+        <option value="svg">SVG</option>
+        <option value="png">PNG</option>
+        <option value="pdf">PDF</option>
+        <option value="xml">XML</option>
+      </select>
+      <input type=submit value="Generate">
+    </form>
     <h2 id="format">Accepted Formats</h2>
     <p>This service only accepts one of two formatted bundles. The preferred bundle format is a "flat" bundle, one which only consists of "services", "relations", and optionally a "series" key. An example of this follows.</p>
     <h3 id="format-preferred">Preferred format</h3>
