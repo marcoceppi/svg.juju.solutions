@@ -33,8 +33,10 @@ def home():
     if bundle_id and bundle_file:
         bottle.abort(400, 'Calm down satan, too many bundles')
 
-    if bundle_id:
-        bundle_url, svg_url = api.parse_bundle_id(bundle_id)
+    if bundle_id.startswith('http'):
+       bundle_url = bundle_id
+    elif bundle_id:
+        bundle_url, _ = api.parse_bundle_id(bundle_id)
     else:
         bundle_url = bundle_file
 

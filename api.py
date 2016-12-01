@@ -29,12 +29,12 @@ class BundleFormatException(Exception):
 
 def parse_bundle_id(bundle_id):
     m = re.match(r'cs(:~[a-z0-9-_]+/|:)bundle/[a-z0-9-]+-[0-9]+', bundle_id)
-    if not m:
-        return None
-
-    bundle_path = m.group(0).replace('cs:', '')
-    return ('https://api.jujucharms.com/v4/%s/archive/bundle.yaml' % bundle_path,
-            'https://api.jujucharms.com/v4/%s/diagram.svg' % bundle_path)
+    if m:
+        bundle_path = m.group(0).replace('cs:', '')
+    else:
+        bundle_path = 'bundle/{0}'.format(bundle_id)
+    return ('https://api.jujucharms.com/v5/%s/archive/bundle.yaml' % bundle_path,
+            'https://api.jujucharms.com/v5/%s/diagram.svg' % bundle_path)
 
 
 def split_rel(r):

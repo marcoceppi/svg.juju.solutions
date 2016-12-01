@@ -7,7 +7,7 @@
     <p>Hello. This is a web service to allow anyone with a <code>bundle.yaml</code> file to have it translated into an SVG as you would see in the Juju GUI or Charm Store</p>
     <p>Enter a bundle.yaml URL and format type to get started:</p>
     <form method=GET>
-      <input type=text size="40" placeholder="Bundle URL" id="bundle-file" name="bundle-file">
+      <input type=text size="40" placeholder="Bundle URL" id="bundle" name="bundle">
       <select name="output">
         <option value="svg">SVG</option>
         <option value="png">PNG</option>
@@ -71,16 +71,16 @@ relations:
     <p>For the GET requests two quereis are supported. You can either send a <code>bundle</code> key, which will use the Juju Charm Store to fetch the details or a <code>bundle-file</code> which needs to be an HTTP addressed URL to the raw source of the bundle's YAML. Here are some examples:
       <ul>
         <li>
-          <a href=http://svg.juju.solutions/?bundle=cs:bundle/openstack-telemetry>svg.juju.solutions/?bundle=cs:bundle/openstack-telemetry</a>
+          <a href=http://svg.juju.solutions/?bundle=openstack-telemetry>svg.juju.solutions/?bundle=openstack-telemetry</a>
         </li>
         <li>
           <a href=http://svg.juju.solutions/?bundle=cs:~bigdata-dev/bundle/apache-analytics-sql-3>svg.juju.solutions/?bundle=cs:~bigdata-dev/bundle/apache-analytics-sql-3</a>
         </li>
         <li>
-          <a href=http://svg.juju.solutions/?bundle-file=https://raw.githubusercontent.com/whitmo/bundle-kubernetes/master/bundles.yaml>svg.juju.solutions/?bundle-file=https://raw.githubusercontent.com/whitmo/bundle-kubernetes/master/bundles.yaml</a>
+          <a href=http://svg.juju.solutions/?bundle=https://raw.githubusercontent.com/marcoceppi/bundle-observable-kubernetes/8681c21a5592806ea90fc56825eee488ac0541d1/bundle.yaml>svg.juju.solutions/?bundle=https://raw.githubusercontent.com/marcoceppi/bundle-observable-kubernetes/8681c21a5592806ea90fc56825eee488ac0541d1/bundle.yaml</a>
         </li>
         <li>
-          <a href=http://svg.juju.solutions/?bundle-file=http://bazaar.launchpad.net/~bigdata-dev/charms/trusty/apache-analytics-sql-hue/trunk/download/head:/bundles.yaml-20150420030716-vycsb0pcenhst8wt-1/bundles.yaml>svg.juju.solutions/?bundle-file=http://bazaar.launchpad.net/~bigdata-dev/charms/trusty/apache-analytics-sql-hue/trunk/download/head:/bundles.yaml-20150420030716-vycsb0pcenhst8wt-1/bundles.yaml</a>
+          <a href=http://svg.juju.solutions/?bundle=http://bazaar.launchpad.net/~bigdata-dev/charms/trusty/apache-analytics-sql-hue/trunk/download/head:/bundles.yaml-20150420030716-vycsb0pcenhst8wt-1/bundles.yaml>svg.juju.solutions/?bundle-file=http://bazaar.launchpad.net/~bigdata-dev/charms/trusty/apache-analytics-sql-hue/trunk/download/head:/bundles.yaml-20150420030716-vycsb0pcenhst8wt-1/bundles.yaml</a>
         </li>
       </ul>
     </p>
