@@ -34,7 +34,7 @@ def home():
         bottle.abort(400, 'Calm down satan, too many bundles')
 
     if bundle_id.startswith('http'):
-       bundle_url = bundle_id
+        bundle_url = bundle_id
     elif bundle_id:
         bundle_url, _ = api.parse_bundle_id(bundle_id)
     else:
@@ -76,6 +76,11 @@ def home():
 def process():
     bundle_file = bottle.request.body.read()
     bundle = yaml.safe_load(bundle_file)
+    format = bottle.request.params.get('output', 'svg')
+
+    if format not in api.TYPES.keys():
+        msg = 'Format {0} not supported: {1}'
+        bottle.abort(400, msg.format(format, ','.join(api.TYPES.keys())))
 
     try:
         svg = api.process_bundle(bundle)
@@ -84,8 +89,13 @@ def process():
     except api.JujuSVGException as e:
         bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
 
-    bottle.response.content_type = 'image/svg+xml'
-    return svg
+    try:
+        output = api.output_bundle(svg, format)
+    except api.JujuSVGException as e:
+        bottle.abort(406, "%s: %s" % (e.cmd, e.msg))
+
+    bottle.response.content_type = api.TYPES.get(format)
+    return output
 
 if __name__ == '__main__':
     bottle.run(app=app,

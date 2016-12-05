@@ -94,7 +94,7 @@ def process_bundle(bundle):
         #algo = getattr(nx, layout + '_layout', None)
         layout(bundle, nx.circular_layout)
 
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile(mode='w') as f:
         f.write(yaml.dump(bundle, default_flow_style=False))
         f.flush()
         try:
